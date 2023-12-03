@@ -268,10 +268,11 @@ function App() {
             </tbody>
           </table>
         </div>
-        <div className="m-2 flex pl-0 rounded list-none flex-wrap">
-        <button onClick={() => setCurrentPage(1)} style={{"margin":"0 1rem"}}>           
-        <MdFirstPage size="20px" />
-        </button>
+        <div className="flex justify-center">
+        <div className="m-2 flex pl-0 rounded list-none flex-wrap ">
+         <button onClick={() => setCurrentPage(1)} style={{"margin":"0 1rem"}}>           
+         <MdFirstPage size="20px" />
+         </button>
         
           <button
             onClick={handlePrevClick}
@@ -304,6 +305,8 @@ function App() {
           <MdLastPage  size="20px" />
         </button>
         </div>
+        </div>
+        
       </div>
     </div>
   );
