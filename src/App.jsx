@@ -4,6 +4,8 @@ import { MdOutlineDelete } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
 import { GrFormNext } from "react-icons/gr";
 import { MdDeleteForever } from "react-icons/md";
+import { MdFirstPage } from "react-icons/md";
+import { MdLastPage } from "react-icons/md";
 import "./App.css";
 
 function App() {
@@ -267,6 +269,10 @@ function App() {
           </table>
         </div>
         <div className="m-2 flex pl-0 rounded list-none flex-wrap">
+        <button onClick={() => setCurrentPage(1)} style={{"margin":"0 1rem"}}>           
+        <MdFirstPage size="20px" />
+        </button>
+        
           <button
             onClick={handlePrevClick}
             disabled={currentPage === 1}
@@ -294,6 +300,9 @@ function App() {
           >
             <GrFormNext size="20px" />
           </button>
+          <button onClick={() => setCurrentPage(totalPages)} style={{"margin":"0 1rem"}}>           
+          <MdLastPage  size="20px" />
+        </button>
         </div>
       </div>
     </div>
