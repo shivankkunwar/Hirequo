@@ -3,6 +3,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { MdOutlineDelete } from "react-icons/md";
 import { GrFormPrevious } from "react-icons/gr";
 import { GrFormNext } from "react-icons/gr";
+import { MdDeleteForever } from "react-icons/md";
 import "./App.css";
 
 function App() {
@@ -52,19 +53,37 @@ function App() {
 
   // deleting and editing
   const [editingId, setEditingId] = useState(null);
-
+  const [editingData, setEditingData] = useState({});
   const handleDelete = (id) => {
     setData(Data.filter((user) => user.id !== id));
     console.log("deletes");
   };
   const handleEdit = (id) => {
     setEditingId(id);
+    setEditingData(Data.find((user) => user.id === id));
   };
 
-  const handleSave = (id, updatedUser) => {
-    setData(Data.map((user) => (user.id === id ? updatedUser : user)));
+  const handleSave = (id) => {
+    setData(Data.map((user) => (user.id === id ? editingData : user)));
     setEditingId(null);
+    setEditingData({});
   };
+
+  const handleNameChange = (e) => {
+    setEditingData({ ...editingData, name: e.target.value });
+  };
+
+  const handleEmailChange = (e) => {
+    setEditingData({ ...editingData, email: e.target.value });
+  };
+
+  const handleRoleChange = (e) => {
+    setEditingData({ ...editingData, role: e.target.value });
+  };
+
+  // selected rows
+
+  const [selectedRows, setSelectedRows] = useState([]);
 
   return (
     <div>
@@ -72,7 +91,7 @@ function App() {
         <div className="align-middle rounded-tl-lg rounded-tr-lg inline-block w-full py-4 overflow-hidden bg-white  px-12">
           <div className="flex justify-between">
             <div className="inline-flex border rounded w-7/12 px-2 lg:px-6 h-12 bg-transparent">
-              <div className="flex flex-wrap items-stretch w-full h-full mb-6 relative">
+              <div className="flex justify-between flex-wrap items-stretch w-full h-full mb-6 relative">
                 <div className="flex">
                   <span className="flex items-center leading-normal bg-transparent rounded rounded-r-none border border-r-0 border-none lg:px-3 py-2 whitespace-no-wrap text-grey-dark text-sm">
                     <svg
@@ -107,6 +126,9 @@ function App() {
                 />
               </div>
             </div>
+            <div className="flex bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ">
+              <MdDeleteForever size="30px" />
+            </div>
           </div>
         </div>
         <div className="table-responsive border bg-gray-100 ">
@@ -118,6 +140,16 @@ function App() {
                     id="checkbox-all-search"
                     type="checkbox"
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    checked={currentData.every((user) =>
+                      selectedRows.includes(user.id)
+                    )}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedRows(currentData.map((user) => user.id));
+                      } else {
+                        setSelectedRows([]);
+                      }
+                    }}
                   />
                 </th>
                 <th className="w-45 p-3 text-sm font-semibold tracking-wide text-left ">
@@ -137,29 +169,73 @@ function App() {
             </thead>
             <tbody>
               {currentData.map((user, i) => (
-                <tr key={user.id} className="bg-white border-b border-gray-200">
+                <tr
+                  key={user.id}
+                  className={`bg-white border-b border-gray-200 ${
+                    selectedRows.includes(user.id) ? "bg-gray-200" : ""
+                  }`}
+                >
                   <td className="p-3 w-12 mr-5">
                     {" "}
                     <input
                       id="checkbox-all-search"
                       type="checkbox"
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      checked={selectedRows.includes(user.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedRows([...selectedRows, user.id]);
+                        } else {
+                          setSelectedRows(
+                            selectedRows.filter((id) => id !== user.id)
+                          );
+                        }
+                      }}
                     />
                   </td>
-                  <td className="p-3 text-sm text-gray-700">{user.name}</td>
-                  <td className="email p-3 text-sm text-gray-700">
-                    {user.email}
+                  <td className="p-3 text-sm text-gray-700">
+                    {editingId === user.id ? (
+                      <input
+                        type="text"
+                        name="name"
+                        value={editingData.name || ""}
+                        onChange={handleNameChange}
+                      />
+                    ) : (
+                      user.name
+                    )}
                   </td>
-                  <td className="p-3 text-sm text-gray-700">{user.role}</td>
+                  <td className="p-3 text-sm text-gray-700">
+                    {editingId === user.id ? (
+                      <input
+                        type="text"
+                        name="email"
+                        value={editingData.email || ""}
+                        onChange={handleEmailChange}
+                      />
+                    ) : (
+                      user.email
+                    )}
+                  </td>
+                  <td className="p-3 text-sm text-gray-700">
+                    {editingId === user.id ? (
+                      <input
+                        type="text"
+                        name="role"
+                        value={editingData.role || ""}
+                        onChange={handleRoleChange}
+                      />
+                    ) : (
+                      user.role
+                    )}
+                  </td>
 
                   <td className="w-20 p-3  text-sm text-gray-700 flex justify-between">
                     {editingId === user.id ? (
-                      <button
-                        onClick={() =>
-                          handleSave(user.id /* updated user data */)
-                        }
-                      >
-                        Save
+                      <button onClick={() => handleSave(user.id)}>
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                          Save
+                        </button>
                       </button>
                     ) : (
                       <button onClick={() => handleEdit(user.id)}>
