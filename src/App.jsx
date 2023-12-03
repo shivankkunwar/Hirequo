@@ -19,7 +19,7 @@ function App() {
       .then((response) => response.json())
       .then((data) => setData(data));
   }, []);
-
+  
   const filteredData = Data.filter((user) => {
     return (
       user.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -27,6 +27,10 @@ function App() {
       user.role.toLowerCase().includes(search.toLowerCase())
     );
   });
+
+  function handleSearch(e){
+    setSearch(e.target.value);
+  }
 
   //pagination
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -122,11 +126,20 @@ function App() {
                   className="flex-shrink flex-grow flex-auto leading-normal tracking-wide w-px flex-1 border border-none border-l-0 rounded rounded-l-none px-3 relative focus:outline-none text-xxs lg:text-xs lg:text-base text-black font-thin"
                   placeholder="Search"
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e)=>setSearch(e.target.value)}
+
+
+                 
                 />
               </div>
             </div>
-            <div className="flex bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ">
+            <div
+              className="flex bg-red-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded "
+              onClick={() => {
+                setData(Data.filter((user) => !selectedRows.includes(user.id)));
+                setSelectedRows([]);
+              }}
+            >
               <MdDeleteForever size="30px" />
             </div>
           </div>
